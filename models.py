@@ -14,30 +14,6 @@ class Employee:
                f'departament: {self.departament}\n' \
                f'position: {self.position}'
 
-    def set_name(self, name):
-        self.name = name
-
-    def get_name(self):
-        return self.name
-
-    def set_surname(self, surname):
-        self.surname = surname
-
-    def get_surname(self):
-        return self.surname
-
-    def set_position(self, position):
-        self.position = position
-
-    def get_position(self):
-        return self.position
-
-    def set_departament(self, departament):
-        self.departament = departament
-
-    def get_departament(self):
-        return self.departament
-
     # def create_project(self, name, from_date=None, to_date=None, manager=None):
     #     return Project(name, from_date, to_date, manager)
 
@@ -51,20 +27,11 @@ class Departament:
     def __str__(self):
         return self.name
 
-    def set_name(self,name):
-        self.name = name
-
-    def get_name(self):
-        return self.name
-
     def add_empoyees(self, employees):
         self.employees.append(employees)
 
-    def get_employees(self):
-        return self.employees
-
-    def remove_employee(self, name):
-        self.employees.remove(name)
+    def remove_employee(self, employee):
+        self.employees.remove(employee)
 
 
 class Position:
@@ -73,12 +40,6 @@ class Position:
         self.name = name
 
     def __str__(self):
-        return self.name
-
-    def set_name(self, name):
-        self.name = name
-
-    def get_name(self):
         return self.name
 
 
@@ -95,18 +56,6 @@ class Tasks:
     def __str__(self):
         return f'{self.name} from: {self.from_date} to: {self.to_date}\n' \
                f'priority: {self.priority}, status: {self.status}'
-
-    def change_status(self, status):
-        self.status = status
-
-    def get_status(self):
-        return self.status
-
-    def change_priority(self, priority):
-        self.priority = priority
-
-    def get_priority(self):
-        return self.priority
 
 
 class Status:
@@ -129,11 +78,11 @@ class Priority:
 
 class Project:
 
-    def __init__(self, name):
+    def __init__(self, name, from_date=None, to_date=None, manager=None):
         self.name = name
-        self.from_date = None
-        self.to_date = None
-        self.manager = None
+        self.from_date = from_date
+        self.to_date = to_date
+        self.manager = manager
         self.employees = []
         self.tasks = []
 
@@ -145,26 +94,23 @@ class Project:
                f'finish project - {self.to_date}\n' \
                f'project tasks - {self.tasks}'
 
-    def change_name(self, name):
-        self.name = name
-
-    def get_name(self):
-        return self.name
-
-    def add_manager(self, manager):
-        self.manager = manager
-
     def add_employees(self, employee):
         self.employees.append(employee)
 
-    def set_from_date(self, date):
-        self.from_date = date
-
-    def set_to_date(self, date):
-        self.to_date = date
+    def remove_employee(self, employee):
+        self.employees.remove(employee)
 
     def add_tasks(self, task):
         self.tasks.append(task)
+
+    def remove_task(self, task):
+        self.tasks.remove(task)
+
+    def get_tasks(self):
+        task_list = []
+        for task in self.tasks:
+            task_list.append(str(task))
+        return '\n'.join(task_list)
 
 
 class AbstractProjectBuilder(metaclass=abc.ABCMeta):
@@ -219,7 +165,9 @@ builder.add_employees('Semenov')
 builder.add_employees('Petrov')
 builder.set_from_date('01.01.2020')
 builder.set_to_date('01.01.2021')
+builder.add_tasks('designing')
 builder.add_tasks('bought equipment')
+builder.add_tasks('building')
 
-print(builder.get_project())
+print(builder.project.get_tasks())
 
