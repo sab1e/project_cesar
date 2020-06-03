@@ -1,6 +1,34 @@
 import abc
 
 
+class Observer(metaclass=abc.ABCMeta):
+    def __init__(self):
+        self._subject = None
+        self._observer_state = None
+
+    @abc.abstractmethod
+    def update(self, arg):
+        pass
+
+
+class Subject(metaclass=abc.ABCMeta):
+    def __init__(self):
+        self._observers = set()
+        self._subject_state = None
+
+    def attach(self, observer):
+        observer._subject = self
+        self._observers.add(observer)
+
+    def detach(self, observer):
+        observer._subject = None
+        self._observers.discard(observer)
+
+    def _notify(self):
+        for observer in self._observers:
+            observer.update(self._subject_state)
+
+
 class Employee:
 
     def __init__(self, name, surname, position=None, departament=None):
@@ -13,9 +41,6 @@ class Employee:
         return f'employee: {self.name} {self. surname}\n' \
                f'departament: {self.departament}\n' \
                f'position: {self.position}'
-
-    # def create_project(self, name, from_date=None, to_date=None, manager=None):
-    #     return Project(name, from_date, to_date, manager)
 
 
 class Departament:
@@ -45,9 +70,11 @@ class Position:
 
 class Tasks:
 
-    def __init__(self, name, from_date=None, to_date=None, priority=None,
+    def __init__(self, name, owner, responsible=None, from_date=None, to_date=None, priority=None,
                  status=None):
         self.name = name
+        self.owner = owner
+        self.responsible = responsible
         self.from_date = from_date
         self.to_date = to_date
         self.priority = priority
