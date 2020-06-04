@@ -7,7 +7,7 @@ class Observer(metaclass=abc.ABCMeta):
         self._observer_state = None
 
     @abc.abstractmethod
-    def update(self, arg):
+    def update(self, task, data):
         pass
 
 
@@ -24,9 +24,9 @@ class Subject(metaclass=abc.ABCMeta):
         observer._subject = None
         self._observers.discard(observer)
 
-    def _notify(self):
+    def _notify(self, task, data):
         for observer in self._observers:
-            observer.update(self._subject_state)
+            observer.update(task, data)
 
 
 class Employee:
@@ -68,21 +68,36 @@ class Position:
         return self.name
 
 
-class Tasks:
+class Tasks(Subject):
 
     def __init__(self, name, owner, responsible=None, from_date=None, to_date=None, priority=None,
                  status=None):
+        super().__init__()
         self.name = name
         self.owner = owner
         self.responsible = responsible
         self.from_date = from_date
         self.to_date = to_date
         self.priority = priority
-        self.status = status
+        self._status = status
 
     def __str__(self):
         return f'{self.name} from: {self.from_date} to: {self.to_date}\n' \
-               f'priority: {self.priority}, status: {self.status}'
+               f'priority: {self.priority}, status: {self._status}'
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        self._status = status
+        self._notify(self.name, status)
+
+
+class SendNotify(Observer):
+    def update(self, task, data):
+        print(f'Статус задачи {task} изменен на {data}')
 
 
 class Status:
@@ -186,15 +201,20 @@ class ProjectBuilder(AbstractProjectBuilder):
         return self.project
 
 
-builder = ProjectBuilder('umbrella')
-builder.add_manager('Ivanov')
-builder.add_employees('Semenov')
-builder.add_employees('Petrov')
-builder.set_from_date('01.01.2020')
-builder.set_to_date('01.01.2021')
-builder.add_tasks('designing')
-builder.add_tasks('bought equipment')
-builder.add_tasks('building')
+# builder = ProjectBuilder('umbrella')
+# builder.add_manager('Ivanov')
+# builder.add_employees('Semenov')
+# builder.add_employees('Petrov')
+# builder.set_from_date('01.01.2020')
+# builder.set_to_date('01.01.2021')
+# builder.add_tasks('designing')
+# builder.add_tasks('bought equipment')
+# builder.add_tasks('building')
+#
+# print(builder.project.get_tasks())
 
-print(builder.project.get_tasks())
+task_1 = Tasks('first', 'Petrov', status='start')
+task_1.attach(SendNotify())
+task_1.status = 'Done'
+task_1.status = 'Refactor'
 
