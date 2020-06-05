@@ -2,12 +2,14 @@ import abc
 
 
 class Observer(metaclass=abc.ABCMeta):
+    """Паттрен Observer следит за изменениями статуса и приоритета задачи
+    При их изменении отправляет сообщение (пока принт в консоль)"""
     def __init__(self):
         self._subject = None
         self._observer_state = None
 
     @abc.abstractmethod
-    def update(self, task, data):
+    def update(self, task_name, data, change_type):
         pass
 
 
@@ -24,9 +26,9 @@ class Subject(metaclass=abc.ABCMeta):
         observer._subject = None
         self._observers.discard(observer)
 
-    def _notify(self, task, data):
+    def _notify(self, task_name, data, change_type):
         for observer in self._observers:
-            observer.update(task, data)
+            observer.update(task_name, data, change_type)
 
 
 class Employee:
@@ -78,7 +80,7 @@ class Tasks(Subject):
         self.responsible = responsible
         self.from_date = from_date
         self.to_date = to_date
-        self.priority = priority
+        self._priority = priority
         self._status = status
 
     def __str__(self):
@@ -92,12 +94,21 @@ class Tasks(Subject):
     @status.setter
     def status(self, status):
         self._status = status
-        self._notify(self.name, status)
+        self._notify(self.name, status, 'статус')
+
+    @property
+    def priority(self):
+        return self._priority
+
+    @priority.setter
+    def priority(self, priority):
+        self._priority = priority
+        self._notify(self.name, priority, 'приоритет')
 
 
 class SendNotify(Observer):
-    def update(self, task, data):
-        print(f'Статус задачи {task} изменен на {data}')
+    def update(self, task_name, data, change_type):
+        print(f'{change_type} задачи {task_name} изменен на {data}')
 
 
 class Status:
@@ -213,8 +224,18 @@ class ProjectBuilder(AbstractProjectBuilder):
 #
 # print(builder.project.get_tasks())
 
-task_1 = Tasks('first', 'Petrov', status='start')
-task_1.attach(SendNotify())
-task_1.status = 'Done'
-task_1.status = 'Refactor'
+priority_quickly = Priority('quickly')
+priority_important = Priority('important')
+status_in_progress = Status('in progress')
+status_correction = Status('correction')
+status_done = Status('done')
 
+task_1 = Tasks('first', 'Petrov', status=status_in_progress,
+               priority=priority_important)
+
+task_1.attach(SendNotify())
+
+task_1.status = status_correction
+task_1.priority = priority_quickly
+task_1.status = status_done
+task_1.priority = priority_important
