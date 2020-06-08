@@ -1,6 +1,36 @@
 import abc
 
 
+class Observer(metaclass=abc.ABCMeta):
+    """Паттрен Observer следит за изменениями статуса и приоритета задачи
+    При их изменении отправляет сообщение (пока принт в консоль)"""
+    def __init__(self):
+        self._subject = None
+        self._observer_state = None
+
+    @abc.abstractmethod
+    def update(self, task_name, data, change_type):
+        pass
+
+
+class Subject(metaclass=abc.ABCMeta):
+    def __init__(self):
+        self._observers = set()
+        self._subject_state = None
+
+    def attach(self, observer):
+        observer._subject = self
+        self._observers.add(observer)
+
+    def detach(self, observer):
+        observer._subject = None
+        self._observers.discard(observer)
+
+    def _notify(self, task_name, data, change_type):
+        for observer in self._observers:
+            observer.update(task_name, data, change_type)
+
+
 class Employee:
 
     def __init__(self, name, surname, position=None, departament=None):
@@ -13,9 +43,6 @@ class Employee:
         return f'employee: {self.name} {self. surname}\n' \
                f'departament: {self.departament}\n' \
                f'position: {self.position}'
-
-    # def create_project(self, name, from_date=None, to_date=None, manager=None):
-    #     return Project(name, from_date, to_date, manager)
 
 
 class Departament:
@@ -43,19 +70,45 @@ class Position:
         return self.name
 
 
-class Tasks:
+class Tasks(Subject):
 
-    def __init__(self, name, from_date=None, to_date=None, priority=None,
+    def __init__(self, name, owner, responsible=None, from_date=None, to_date=None, priority=None,
                  status=None):
+        super().__init__()
         self.name = name
+        self.owner = owner
+        self.responsible = responsible
         self.from_date = from_date
         self.to_date = to_date
-        self.priority = priority
-        self.status = status
+        self._priority = priority
+        self._status = status
 
     def __str__(self):
         return f'{self.name} from: {self.from_date} to: {self.to_date}\n' \
-               f'priority: {self.priority}, status: {self.status}'
+               f'priority: {self.priority}, status: {self._status}'
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        self._status = status
+        self._notify(self.name, status, 'статус')
+
+    @property
+    def priority(self):
+        return self._priority
+
+    @priority.setter
+    def priority(self, priority):
+        self._priority = priority
+        self._notify(self.name, priority, 'приоритет')
+
+
+class SendNotify(Observer):
+    def update(self, task_name, data, change_type):
+        print(f'{change_type} задачи {task_name} изменен на {data}')
 
 
 class Status:
@@ -159,15 +212,30 @@ class ProjectBuilder(AbstractProjectBuilder):
         return self.project
 
 
-builder = ProjectBuilder('umbrella')
-builder.add_manager('Ivanov')
-builder.add_employees('Semenov')
-builder.add_employees('Petrov')
-builder.set_from_date('01.01.2020')
-builder.set_to_date('01.01.2021')
-builder.add_tasks('designing')
-builder.add_tasks('bought equipment')
-builder.add_tasks('building')
+# builder = ProjectBuilder('umbrella')
+# builder.add_manager('Ivanov')
+# builder.add_employees('Semenov')
+# builder.add_employees('Petrov')
+# builder.set_from_date('01.01.2020')
+# builder.set_to_date('01.01.2021')
+# builder.add_tasks('designing')
+# builder.add_tasks('bought equipment')
+# builder.add_tasks('building')
+#
+# print(builder.project.get_tasks())
 
-print(builder.project.get_tasks())
+priority_quickly = Priority('quickly')
+priority_important = Priority('important')
+status_in_progress = Status('in progress')
+status_correction = Status('correction')
+status_done = Status('done')
 
+task_1 = Tasks('first', 'Petrov', status=status_in_progress,
+               priority=priority_important)
+
+task_1.attach(SendNotify())
+
+task_1.status = status_correction
+task_1.priority = priority_quickly
+task_1.status = status_done
+task_1.priority = priority_important
