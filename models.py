@@ -224,18 +224,18 @@ class ProjectBuilder(AbstractProjectBuilder):
 #
 # print(builder.project.get_tasks())
 
-priority_quickly = Priority('quickly')
-priority_important = Priority('important')
-status_in_progress = Status('in progress')
-status_correction = Status('correction')
-status_done = Status('done')
-
-task_1 = Tasks('first', 'Petrov', status=status_in_progress,
-               priority=priority_important)
-
-task_1.attach(SendNotify())
-
-task_1.status = status_correction
-task_1.priority = priority_quickly
-task_1.status = status_done
-task_1.priority = priority_important
+# priority_quickly = Priority('quickly')
+# priority_important = Priority('important')
+# status_in_progress = Status('in progress')
+# status_correction = Status('correction')
+# status_done = Status('done')
+#
+# task_1 = Tasks('first', 'Petrov', status=status_in_progress,
+#                priority=priority_important)
+#
+# task_1.attach(SendNotify())
+#
+# task_1.status = status_correction
+# task_1.priority = priority_quickly
+# task_1.status = status_done
+# task_1.priority = priority_important
