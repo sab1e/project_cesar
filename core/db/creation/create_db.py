@@ -27,7 +27,7 @@ class Sqlite3Builder:
             with open(path_to_script) as f:
                 cur.executescript(f.read())
 
-    def drop_employee(self):
+    def drop_employees(self):
         with sqlite3.connect(self.db_name) as conn:
             cur = conn.cursor()
             cur.execute('DROP TABLE IF EXISTS employee')

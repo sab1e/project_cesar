@@ -35,8 +35,8 @@ class Subject(metaclass=abc.ABCMeta):
 
 class Employee(DomainObject):
 
-    def __init__(self, id_employee, name, surname, position=None, departament=None):
-        self.id_employee = id_employee
+    def __init__(self, id, name, surname, position=None, departament=None):
+        self.id_employee = id
         self.name = name
         self.surname = surname
         self.position = position
@@ -215,127 +215,6 @@ class ProjectBuilder(AbstractProjectBuilder):
         return self.project
 
 
-connection = sqlite3.connect('projects_data.sqlite')
-
-
-class RecordNotFoundException(Exception):
-    def __init__(self, message):
-        super().__init__(f'Record not found: {message}')
-
-
-class DbCommitException(Exception):
-    def __init__(self, message):
-        super().__init__(f'Db commit error: {message}')
-
-
-class DbUpdateException(Exception):
-    def __init__(self, message):
-        super().__init__(f'Db update error: {message}')
-
-
-class DbDeleteException(Exception):
-    def __init__(self, message):
-        super().__init__(f'Db delete error: {message}')
-
-
-class EmployeeMapper:
-    def __init__(self, connection):
-        self.connection = connection
-        self.cursor = connection.cursor()
-
-    def find_by_id(self, id_employee):
-        statment = f"SELECT ID_EMPLOYEE, NAME, SURNAME " \
-                   f"FROM EMPLOYEE WHERE ID_EMPLOYEE=?"
-
-        self.cursor.execute(statment, (id_employee, ))
-        result = self.cursor.fetchall()
-        if result:
-            return Employee(*result[0])
-        else:
-            raise RecordNotFoundException(f'record with id={id_employee} '
-                                          f'not found')
-
-    def insert(self, employee):
-        statment = f'INSERT INTO EMPLOYEE (NAME, SURNAME) VALUES (?, ?)'
-
-        self.cursor.execute(statment, (employee.name, employee.surname))
-        try:
-            self.connection.commit()
-        except Exception as e:
-            raise DbCommitException(e.args)
-
-    def update(self, employee):
-        statment = f'UPDATE EMPLOYEE SET NAME=?, SURNAME=? WHERE ID_EMPLOYEE=?'
-        self.cursor.execute(statment, (employee.name, employee.surname,
-                                       employee.id_employee))
-        try:
-            self.connection.commit()
-        except Exception as e:
-            raise DbUpdateException(e.args)
-
-    def delete(self, employee):
-        statment = f'DELETE FROM EMPLOYEE WHERE ID_EMPLOYEE=?'
-        self.cursor.execute(statment)
-        try:
-            self.connection.commit()
-        except Exception as e:
-            raise DbDeleteException(e.args)
-
-
-class MapperRegistry:
-    @staticmethod
-    def get_mapper(obj):
-        if isinstance(obj, Employee):
-            return EmployeeMapper(connection)
-
-
-class UnitOfWork:
-    current = threading.local()
-
-    def __init__(self):
-        self.new_objects = []
-        self.dirty_objects = []
-        self.removed_objects = []
-
-    def register_new(self, obj):
-        self.new_objects.append(obj)
-
-    def register_dirty(self, obj):
-        self.dirty_objects.append(obj)
-
-    def register_removed(self, obj):
-        self.removed_objects.append(obj)
-
-    def commit(self):
-        self.insert_new()
-        self.update_dirty()
-        self.delete_removed()
-
-    def insert_new(self):
-        for obj in self.new_objects:
-            MapperRegistry.get_mapper(obj).insert(obj)
-
-    def update_dirty(self):
-        for obj in self.dirty_objects:
-            MapperRegistry.get_mapper(obj).update(obj)
-
-    def delete_removed(self):
-        for obj in self.removed_objects:
-            MapperRegistry.get_mapper(obj).delete(obj)
-
-    @staticmethod
-    def new_current():
-        __class__.set_current(UnitOfWork())
-
-    @classmethod
-    def set_current(cls, unit_of_work):
-        cls.current.unit_of_work = unit_of_work
-
-    @classmethod
-    def get_current(cls):
-        return cls.current.unit_of_work
-
-
 # builder = ProjectBuilder('umbrella')
 # builder.add_manager('Ivanov')
 # builder.add_employees('Semenov')
@@ -363,31 +242,3 @@ class UnitOfWork:
 # task_1.priority = priority_quickly
 # task_1.status = status_done
 # task_1.priority = priority_important
-
-# try:
-UnitOfWork.new_current()
-new_employee_1 = Employee(None, 'Petr', 'Petrov')
-new_employee_1.mark_new()
-
-new_employee_2 = Employee(None, 'Igor', 'Igorev')
-new_employee_2.mark_new()
-
-employee_mapper_2 = EmployeeMapper(connection)
-exists_employee_1 = employee_mapper_2.find_by_id(1)
-exists_employee_1.mark_dirty()
-print(exists_employee_1.name)
-exists_employee_1.name += ' Senior'
-print(exists_employee_1.name)
-
-exists_employee_2 = employee_mapper_2.find_by_id(2)
-exists_employee_2.mark_removed()
-
-print(UnitOfWork.get_current().__dict__)
-
-UnitOfWork.get_current().commit()
-# except Exception as e:
-#     print(e.args)
-# finally:
-#     UnitOfWork.set_current(None)
-
-print(UnitOfWork.get_current())

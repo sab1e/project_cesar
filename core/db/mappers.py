@@ -64,6 +64,12 @@ class EmployeeMapper:
         except Exception as e:
             raise DbDeleteException(e.args)
 
+    def count(self):
+        statement = f"SELECT count(*) from {self.tablename}"
+        self.cursor.execute(statement)
+        result = self.cursor.fetchall()[0][0]
+        return result
+
 
 class MapperRegistry:
     def __init__(self, connection, Employee):
