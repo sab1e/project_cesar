@@ -1,18 +1,6 @@
 import abc
-import sqlite3
-import threading
 
-
-class DomainObject:
-
-    def mark_new(self):
-        UnitOfWork.get_current().register_new(self)
-
-    def mark_dirty(self):
-        UnitOfWork.get_current().register_dirty(self)
-
-    def mark_removed(self):
-        UnitOfWork.get_current().register_removed(self)
+from .db.unity_of_work import DomainObject
 
 
 class Observer(metaclass=abc.ABCMeta):

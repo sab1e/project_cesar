@@ -1,4 +1,3 @@
-from models import Employee
 from db_core import *
 
 try:
