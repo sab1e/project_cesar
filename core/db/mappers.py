@@ -26,8 +26,8 @@ class EmployeeMapper:
         self.tablename = 'employee'
 
     def find_by_id(self, id):
-        statment = f"SELECT ID_EMPLOYEE, NAME, SURNAME " \
-                   f"FROM {self.tablename} WHERE ID_EMPLOYEE=?"
+        statment = f"SELECT id_employee, name, surname " \
+                   f"FROM {self.tablename} WHERE id_employee=?"
 
         self.cursor.execute(statment, (id, ))
         result = self.cursor.fetchall()
@@ -38,7 +38,7 @@ class EmployeeMapper:
 
     def insert(self, employee):
         statment = f'INSERT INTO {self.tablename} ' \
-                   f'(NAME, SURNAME) VALUES (?, ?)'
+                   f'(name, surname) VALUES (?, ?)'
 
         self.cursor.execute(statment, (employee.name, employee.surname))
         try:
@@ -47,8 +47,8 @@ class EmployeeMapper:
             raise DbCommitException(e.args)
 
     def update(self, employee):
-        statment = f'UPDATE {self.tablename} SET NAME=?, SURNAME=? ' \
-                   f'WHERE ID_EMPLOYEE=?'
+        statment = f'UPDATE {self.tablename} SET name=?, surname=? ' \
+                   f'WHERE id_employee=?'
         self.cursor.execute(statment, (employee.name, employee.surname,
                                        employee.id_employee))
         try:
@@ -57,7 +57,7 @@ class EmployeeMapper:
             raise DbUpdateException(e.args)
 
     def delete(self, employee):
-        statment = f'DELETE FROM {self.tablename} WHERE ID_EMPLOYEE=?'
+        statment = f'DELETE FROM {self.tablename} WHERE id_employee=?'
         self.cursor.execute(statment, (employee.id_employee, ))
         try:
             self.connection.commit()
