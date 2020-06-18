@@ -82,6 +82,12 @@ class ProjectMapper:
         statement = f'SELECT * FROM {self.tablename}'
         self.cursor.execute(statement)
 
+        projects = []
+        for item in self.cursor.fetchall():
+            project = self.Project(*item)
+            projects.append(project)
+        return projects
+
     def find_by_id(self, id):
         statment = f'SELECT id_project, name, from_date, to_date, ' \
                    f'manager, employees, tasks FROM {self.tablename} ' \
