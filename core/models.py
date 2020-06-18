@@ -132,9 +132,10 @@ class Priority:
         return self.name
 
 
-class Project:
+class Project(DomainObject):
 
-    def __init__(self, name, from_date=None, to_date=None, manager=None):
+    def __init__(self, id, name, from_date=None, to_date=None, manager=None):
+        self.id_project = id
         self.name = name
         self.from_date = from_date
         self.to_date = to_date
