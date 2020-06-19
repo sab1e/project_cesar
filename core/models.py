@@ -43,22 +43,21 @@ class Employee(DomainObject):
         self.departament = departament
 
     def __str__(self):
-        return f'employee: {self.name} {self. surname}\n' \
-               f'departament: {self.departament}\n' \
-               f'position: {self.position}'
+        return f'{self.name} {self. surname}'
 
 
 class Departament:
 
-    def __init__(self, name):
+    def __init__(self, id, name, employees=[]):
+        self.id_departament = id
         self.name = name
-        self.employees = []
+        self.employees = employees
 
     def __str__(self):
         return self.name
 
-    def add_empoyees(self, employees):
-        self.employees.append(employees)
+    def add_empoyee(self, employee):
+        self.employees.append(employee)
 
     def remove_employee(self, employee):
         self.employees.remove(employee)
@@ -66,7 +65,8 @@ class Departament:
 
 class Position:
 
-    def __init__(self, name):
+    def __init__(self, id, name):
+        self.id_position = id
         self.name = name
 
     def __str__(self):
@@ -75,9 +75,10 @@ class Position:
 
 class Tasks(Subject):
 
-    def __init__(self, name, owner, responsible=None, from_date=None, to_date=None, priority=None,
-                 status=None):
+    def __init__(self, id, name, owner, responsible=None, from_date=None,
+                 to_date=None, priority=None, status=None):
         super().__init__()
+        self.id_task = id
         self.name = name
         self.owner = owner
         self.responsible = responsible
@@ -87,8 +88,7 @@ class Tasks(Subject):
         self._status = status
 
     def __str__(self):
-        return f'{self.name} from: {self.from_date} to: {self.to_date}\n' \
-               f'priority: {self.priority}, status: {self._status}'
+        return f'{self.name}'
 
     @property
     def status(self):
@@ -116,7 +116,8 @@ class SendNotify(Observer):
 
 class Status:
 
-    def __init__(self, name):
+    def __init__(self, id, name):
+        self.id_status = id
         self.name = name
 
     def __str__(self):
@@ -125,7 +126,8 @@ class Status:
 
 class Priority:
 
-    def __init__(self, name):
+    def __init__(self, id, name):
+        self.id_priority = id
         self.name = name
 
     def __str__(self):
@@ -145,30 +147,19 @@ class Project(DomainObject):
         self.tasks = tasks
 
     def __str__(self):
-        return f'{self.name}:\n' \
-               f'manager - {self.manager}\n' \
-               f'project team - {self.employees}\n' \
-               f'start project - {self.from_date}\n' \
-               f'finish project - {self.to_date}\n' \
-               f'project tasks - {self.tasks}'
+        return f'{self.name}'
 
-    def add_employees(self, employee):
+    def add_employee(self, employee):
         self.employees.append(employee)
 
     def remove_employee(self, employee):
         self.employees.remove(employee)
 
-    def add_tasks(self, task):
+    def add_task(self, task):
         self.tasks.append(task)
 
     def remove_task(self, task):
         self.tasks.remove(task)
-
-    def get_tasks(self):
-        task_list = []
-        for task in self.tasks:
-            task_list.append(str(task))
-        return '\n'.join(task_list)
 
 
 class AbstractProjectBuilder(metaclass=abc.ABCMeta):
@@ -215,32 +206,3 @@ class ProjectBuilder(AbstractProjectBuilder):
 
     def get_project(self):
         return self.project
-
-
-# builder = ProjectBuilder('umbrella')
-# builder.add_manager('Ivanov')
-# builder.add_employees('Semenov')
-# builder.add_employees('Petrov')
-# builder.set_from_date('01.01.2020')
-# builder.set_to_date('01.01.2021')
-# builder.add_tasks('designing')
-# builder.add_tasks('bought equipment')
-# builder.add_tasks('building')
-#
-# print(builder.project.get_tasks())
-
-# priority_quickly = Priority('quickly')
-# priority_important = Priority('important')
-# status_in_progress = Status('in progress')
-# status_correction = Status('correction')
-# status_done = Status('done')
-#
-# task_1 = Tasks('first', 'Petrov', status=status_in_progress,
-#                priority=priority_important)
-#
-# task_1.attach(SendNotify())
-#
-# task_1.status = status_correction
-# task_1.priority = priority_quickly
-# task_1.status = status_done
-# task_1.priority = priority_important
