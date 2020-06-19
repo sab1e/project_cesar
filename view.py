@@ -17,15 +17,15 @@ def index_view(request):
         body += f'<div class ="col-sm">{project.id_project}</div>' \
                 f'<div class ="col-sm">{project.name}</div>' \
                 f'<div class ="col-sm">' \
-                f'{"" if project.from_date == None else project.from_date}' \
+                f'{"" if project.from_date is None else project.from_date}' \
                 f'</div><div class ="col-sm">' \
-                f'{"" if project.to_date == None else project.to_date}' \
+                f'{"" if project.to_date is None else project.to_date}' \
                 f'</div><div class ="col-sm">' \
-                f'{"" if project.manager == None else project.manager}' \
+                f'{"" if project.manager is None else project.manager}' \
                 f'</div><div class ="col-sm">' \
-                f'{"" if project.employees == None else project.employees}' \
+                f'{"" if project.employees is None else project.employees}' \
                 f'</div><div class ="col-sm">' \
-                f'{"" if project.tasks == None else project.tasks}</div>' \
+                f'{"" if project.tasks is None else project.tasks}</div>' \
                 f'<div class ="w-100"></div>'
     context = INDEX_HEAD + body + INDEX_FOOT
     return '200 OK', context

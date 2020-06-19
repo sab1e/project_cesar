@@ -8,9 +8,9 @@ from core.models import Employee, Departament, Position, Project, Tasks, Status,
 class TestEmployee(unittest.TestCase):
     """Класс тестов для Employee()"""
     def setUp(self):
-        self.departament = Departament('project')
-        self.position = Position('engineer')
-        self.employee = Employee('Ivan', 'Ivanov',
+        self.departament = Departament(1, 'project')
+        self.position = Position(1, 'engineer')
+        self.employee = Employee(1, 'Ivan', 'Ivanov',
                                  self.position, self.departament)
 
     def test_init(self):
@@ -20,25 +20,25 @@ class TestEmployee(unittest.TestCase):
         self.assertEqual(self.employee.departament.name, 'project')
 
     def test_str(self):
-        self.assertEqual(str(self.employee), 'employee: Ivan Ivanov\n'
-                                             'departament: project\n'
-                                             'position: engineer')
+        self.assertEqual(str(self.employee), 'Ivan Ivanov')
 
 
 class TestDepartament(unittest.TestCase):
     """Класс тестов для Departament()"""
     def setUp(self):
-        self.departament = Departament('project')
-        self.employee_ivan = Employee('Ivan',
+        self.departament = Departament(1, 'project')
+        self.employee_ivan = Employee(1,
+                                      'Ivan',
                                       'Ivanov',
                                       'engineer',
                                       'project')
-        self.employee_petr = Employee('Petr',
+        self.employee_petr = Employee(2,
+                                      'Petr',
                                       'Petrov',
                                       'lead_engineer',
                                       'project')
-        self.departament.add_empoyees(self.employee_ivan)
-        self.departament.add_empoyees(self.employee_petr)
+        self.departament.add_empoyee(self.employee_ivan)
+        self.departament.add_empoyee(self.employee_petr)
 
     def test_init(self):
         self.assertEqual(self.departament.name, 'project')
@@ -58,9 +58,14 @@ class TestDepartament(unittest.TestCase):
 class TestTasks(unittest.TestCase):
     """Класс тестов для Tasks()"""
     def setUp(self):
-        self.priotity = Priority('quickly')
-        self.status = Status('in progress')
-        self.task = Tasks('calculation', '01.01.2020', '07.01.2020',
+        self.employee_ivan = Employee(1, 'Ivan', 'Ivanov',
+                                      'engineer', 'project')
+        self.employee_petr = Employee(2, 'Petr', 'Petrov',
+                                      'lead_engineer', 'project')
+        self.priotity = Priority(1, 'quickly')
+        self.status = Status(1, 'in progress')
+        self.task = Tasks(1, 'calculation', self.employee_ivan,
+                          self.employee_petr, '01.01.2020', '07.01.2020',
                           self.priotity, self.status)
 
     def test_init(self):
@@ -71,16 +76,13 @@ class TestTasks(unittest.TestCase):
         self.assertEqual(self.task.status.name, 'in progress')
 
     def test_str(self):
-        self.assertEqual(str(self.task), 'calculation from: 01.01.2020 '
-                                         'to: 07.01.2020\n'
-                                         'priority: quickly, '
-                                         'status: in progress')
+        self.assertEqual(str(self.task), 'calculation')
 
 
 class TestStatus(unittest.TestCase):
     """Класс тестов для Status()"""
     def setUp(self):
-        self.position = Position('engineer')
+        self.position = Position(1, 'engineer')
 
     def test_init(self):
         self.assertEqual(self.position.name, 'engineer')
@@ -92,7 +94,7 @@ class TestStatus(unittest.TestCase):
 class TestPriotity(unittest.TestCase):
     """Класс тестов для Priority()"""
     def setUp(self):
-        self.priority = Priority('quickly')
+        self.priority = Priority(1, 'quickly')
 
     def test_init(self):
         self.assertEqual(self.priority.name, 'quickly')
@@ -104,20 +106,14 @@ class TestPriotity(unittest.TestCase):
 class TestProject(unittest.TestCase):
     """Класс тестов для Project()"""
     def setUp(self):
-        self.manager = Employee('Petr',
-                                'Petrov',
-                                'lead_engineer',
-                                'project')
-        self.project = Project('Umbrella', '01.01.2020', '07.01.2020',
-                               self.manager)
-        self.employee_ivan = Employee('Ivan',
-                                      'Ivanov',
-                                      'engineer',
-                                      'project')
-        self.employee_alex = Employee('Alex',
-                                      'Alexandrov',
-                                      'engineer',
-                                      'bilding')
+        self.manager = Employee(1, 'Petr', 'Petrov',
+                                'lead_engineer', 'project')
+        self.project = Project(1, 'Umbrella', '01.01.2020',
+                               '07.01.2020', self.manager)
+        self.employee_ivan = Employee(2, 'Ivan', 'Ivanov',
+                                      'engineer', 'project')
+        self.employee_alex = Employee(3, 'Alex', 'Alexandrov',
+                                      'engineer', 'bilding')
         self.project.employees.append(self.employee_ivan)
         self.project.employees.append(self.employee_alex)
 
