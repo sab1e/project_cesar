@@ -205,7 +205,7 @@ class PositionMapper(BaseMapper):
 class TasksMapper(BaseMapper):
     def __init__(self, connection, cls):
         super().__init__(connection, cls)
-        self.tablename = 'tasks'
+        self.tablename = 'task'
 
     def insert(self, task):
         statment = f'INSERT INTO {self.tablename} ' \
