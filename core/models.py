@@ -48,10 +48,13 @@ class Employee(DomainObject):
 
 class Departament:
 
-    def __init__(self, id, name, employees=[]):
+    def __init__(self, id, name, employees=None):
         self.id_departament = id
         self.name = name
-        self.employees = employees
+        if employees is None:
+            self.employees = []
+        else:
+            self.employees = employees
 
     def __str__(self):
         return self.name
@@ -137,14 +140,22 @@ class Priority:
 class Project(DomainObject):
 
     def __init__(self, id, name, from_date=None, to_date=None, manager=None,
-                 employees=[], tasks=[]):
+                 employees=None, tasks=None):
         self.id_project = id
         self.name = name
         self.from_date = from_date
         self.to_date = to_date
         self.manager = manager
-        self.employees = employees
-        self.tasks = tasks
+
+        if employees is None:
+            self.employees = []
+        else:
+            self.employees = employees
+
+        if tasks is None:
+            self.tasks = []
+        else:
+            self.tasks = tasks
 
     def __str__(self):
         return f'{self.name}'
