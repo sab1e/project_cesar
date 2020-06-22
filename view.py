@@ -5,7 +5,7 @@ from core.application import Application
 from core.models import Project
 from core.test_mappers import ProjectMapper
 from core.templates import render
-from settings import DB_NAME, INDEX_HEAD, INDEX_FOOT
+from settings import DB_NAME
 
 connection = sqlite3.connect(DB_NAME)
 mapper = ProjectMapper(connection, Project)
