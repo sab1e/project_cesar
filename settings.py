@@ -1,6 +1,5 @@
 import os
 
-
 DB_NAME = 'projects_db.sqlite'
 
 path_to_templates = os.path.dirname(os.path.abspath(__file__))

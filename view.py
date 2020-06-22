@@ -1,4 +1,5 @@
 import sqlite3
+from http import HTTPStatus
 
 from core.application import Application
 from core.models import Project
@@ -28,7 +29,7 @@ def index_view(request):
                 f'{"" if project.tasks is None else project.tasks}</div>' \
                 f'<div class ="w-100"></div>'
     context = INDEX_HEAD + body + INDEX_FOOT
-    return '200 OK', context
+    return f'{HTTPStatus.OK.value} {HTTPStatus.OK.phrase}', context
 
 
 urls = {'/': index_view}
