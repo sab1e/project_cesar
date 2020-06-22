@@ -1,7 +1,7 @@
 """Unit-тесты models.py"""
 
 import unittest
-from models import Employee, Departament, Position, Project, Tasks, Status,\
+from core.models import Employee, Departament, Position, Project, Tasks, Status,\
     Priority
 
 

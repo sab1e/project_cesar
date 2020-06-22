@@ -1,5 +1,7 @@
 import abc
 
+from .db.unity_of_work import DomainObject
+
 
 class Observer(metaclass=abc.ABCMeta):
     """Паттрен Observer следит за изменениями статуса и приоритета задачи
@@ -31,9 +33,10 @@ class Subject(metaclass=abc.ABCMeta):
             observer.update(task_name, data, change_type)
 
 
-class Employee:
+class Employee(DomainObject):
 
-    def __init__(self, name, surname, position=None, departament=None):
+    def __init__(self, id, name, surname, position=None, departament=None):
+        self.id_employee = id
         self.name = name
         self.surname = surname
         self.position = position
