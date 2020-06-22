@@ -8,7 +8,7 @@ from .models import Employee
 
 class TestUnityOfWork(unittest.TestCase):
     def setUp(self):
-        self.db_name = 'test_mapper_db.sqlite'
+        self.db_name = 'test_mappers.sqlite'
         self.builder = Sqlite3Builder(self.db_name)
         self.builder.create_employees()
         self.conn = sqlite3.connect(self.db_name)
