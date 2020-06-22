@@ -28,9 +28,9 @@ class BaseMapper:
     def find_by_id(self, id):
         statment = f"SELECT * FROM {self.tablename} WHERE id=?"
         self.cursor.execute(statment, (id,))
-        result = self.cursor.fetchall()
+        result = self.cursor.fetchone()
         if result:
-            return self.cls(*result[0])
+            return self.cls(*result)
         else:
             raise RecordNotFoundException(f'record with id={id} not found')
 
@@ -55,7 +55,7 @@ class BaseMapper:
     def count(self):
         statement = f"SELECT count(*) from {self.tablename}"
         self.cursor.execute(statement)
-        result = self.cursor.fetchall()[0][0]
+        result, *_ = self.cursor.fetchone()
         return result
 
 

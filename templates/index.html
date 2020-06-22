@@ -35,3 +35,26 @@
                 Задачи
             </div>
             <div class="w-100"></div>
+            {% for project in projects %}
+                <div class ="col-sm">{{project.id_project}}</div>
+                <div class ="col-sm">{{project.name}}</div>
+                <div class ="col-sm">
+                {{project.from_date}}
+                </div><div class ="col-sm">
+                {{project.to_date}}
+                </div><div class ="col-sm">
+                {{project.manager}}
+                </div><div class ="col-sm">
+                {{project.employees}}
+                </div><div class ="col-sm">
+                {{project.tasks}}</div>
+                <div class ="w-100"></div>
+            {% endfor %}
+
+
+
+
+        </div>
+	</div>
+  </body>
+</html>
